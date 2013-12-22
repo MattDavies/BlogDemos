@@ -13,7 +13,7 @@ echo "Testing sequential 8K write speed, please wait..."
 # Measure the time taken to write a file 2xRAM size to disk and synch it.
 # At this size, we are making sure caching can have little effect.
 
-writeTime=`time (sh -c "dd if=/dev/zero of=$path/ddfile bs=8k count=$writeCount > /dev/null 2>&1 && sync") 2>&1`
+writeTime=`time (sh -c "dd if=/dev/zero of=$path/ddfile1 bs=8k count=$writeCount > /dev/null 2>&1 && sync") 2>&1`
 writeSpeed=`bc -l <<< "scale=0; $writeCount * 8 / $writeTime / 1024"`
 
 echo "Write speed: $writeSpeed MB/s"
@@ -34,8 +34,13 @@ dd if=/dev/zero of=$path/ddfile2 bs=8K count=$flushCount > /dev/null 2>&1
 echo
 echo "Testing 8K sequential read speed, please wait..."
 
-readTime=`time (sh -c "dd if=$path/ddfile bs=8K > /dev/null 2>&1") 2>&1`
+readTime=`time (sh -c "dd if=$path/ddfile1 bs=8K > /dev/null 2>&1") 2>&1`
 readSpeed=`bc -l <<< "scale=0; $writeCount * 8 / $readTime / 1024"`
 
 echo "Read speed: $readSpeed MB/s"
+echo
+
+echo "Cleaning up..."
+rm -f $path/ddfile1 $path/ddfile2
+echo "...done."
 echo
